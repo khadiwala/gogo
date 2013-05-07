@@ -1,6 +1,7 @@
 package game
 
 import (
+	"fmt"
 	"math/rand"
 	"time"
 )
@@ -16,8 +17,23 @@ type vertex struct {
 	col int
 }
 
-func uct(board *Board) {
+func allMoves(size int) []vertex {
+	length := size * size
+	moves := make([]vertex, 0, length)
+	for col := 0; col < size; col++ {
+		for row := 0; row < size; row++ {
+			moves = append(moves, vertex{row, col})
+		}
+	}
+	return moves
+}
 
+func uct(board *Board, turn string) {
+	for _, m := range allMoves(board.size) {
+		c := board.Copy()
+		c.Play(m.row, m.col, turn)
+		fmt.Println(m, evaluate(&c, enemies[turn]))
+	}
 }
 
 func seed() {
@@ -37,15 +53,8 @@ func random_evaluate(board *Board, turn string) map[byte]int {
 }
 
 func evaluate(board *Board, turn string) map[byte]int {
-	c := board.Copy()
-	board = &c
+	moves := allMoves(board.size)
 	length := board.size * board.size
-	moves := make([]vertex, 0, length)
-	for col := 0; col < board.size; col++ {
-		for row := 0; row < board.size; row++ {
-			moves = append(moves, vertex{row, col})
-		}
-	}
 	indicies := rand.Perm(length)
 	for i := 0; i < length; i++ {
 		m := moves[indicies[i]]

@@ -133,7 +133,12 @@ func TestCopy(t *testing.T) {
 	}
 }
 
-func TestSim(t *testing.T) {
+func TestUCT(t *testing.T) {
+	b := New(19)
+	uct(&b, "black")
+}
+
+/*func TestKomi(t *testing.T) {
 	seed()
 	for j := 9; j <= 19; j++ {
 		b := New(j)
@@ -144,4 +149,4 @@ func TestSim(t *testing.T) {
 		}
 		t.Log(j, float32(sum)/1000)
 	}
-}
+}*/
