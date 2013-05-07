@@ -16,17 +16,6 @@ type Board struct {
 	size  int
 }
 
-func New(size int) Board {
-	state := make([][]byte, size)
-	for i := range state {
-		state[i] = make([]byte, size)
-		for j := range state[i] {
-			state[i][j] = colors["empty"]
-		}
-	}
-	return Board{state, size}
-}
-
 func (board *Board) onBoard(p *Point) bool {
 	return p.row >= 0 && p.col >= 0 && p.row < board.size && p.col < board.size
 }
@@ -178,10 +167,32 @@ func (board *Board) Play(row int, col int, c string) bool {
 	return false
 }
 
-func (board Board) String() string {
+func (board *Board) String() string {
 	s := ""
 	for _, row := range board.state {
 		s = s + string(row) + "\n"
 	}
 	return s
+}
+
+func (board *Board) Copy() Board {
+	state := make([][]byte, board.size)
+	for i := range state {
+		state[i] = make([]byte, board.size)
+		for j := range state[i] {
+			state[i][j] = board.state[i][j]
+		}
+	}
+	return Board{state, board.size}
+}
+
+func New(size int) Board {
+	state := make([][]byte, size)
+	for i := range state {
+		state[i] = make([]byte, size)
+		for j := range state[i] {
+			state[i][j] = colors["empty"]
+		}
+	}
+	return Board{state, size}
 }

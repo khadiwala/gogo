@@ -24,7 +24,7 @@ func checkList(expected map[Point]bool, actual []*Point, t *testing.T) bool {
 
 func TestBoard(t *testing.T) {
 	x := New(19)
-	t.Log("\n", x)
+	t.Log("\n", &x)
 }
 
 func Test2Neighbors(t *testing.T) {
@@ -105,28 +105,43 @@ func TestPlay(t *testing.T) {
 	b := New(19)
 	b.Play(0, 0, "white")
 	b.Play(0, 1, "black")
-	t.Log("\n", b)
+	t.Log("\n", &b)
 	b.Play(1, 0, "black")
-	t.Log("\n", b)
+	t.Log("\n", &b)
 	b.Clear()
 	b.Play(2, 2, "white")
 	b.Play(1, 2, "black")
 	b.Play(2, 3, "black")
 	b.Play(2, 1, "black")
 	b.Play(3, 2, "black")
-	t.Log("\n", b)
+	t.Log("\n", &b)
 }
 
-func TestSim(t *testing.T) {
+func TestCopy(t *testing.T) {
 	b := New(19)
 	b.Play(1, 0, "black")
 	b.Play(2, 2, "white")
 	b.Play(3, 2, "black")
-	t.Log(evaluate(&b, "white"))
-	t.Log(evaluate(&b, "white"))
-	t.Log(evaluate(&b, "white"))
-	t.Log(evaluate(&b, "white"))
-	t.Log(evaluate(&b, "white"))
-	t.Log(evaluate(&b, "white"))
-	t.Log("\n\n", b)
+	c := b.Copy()
+	if c.String() != b.String() {
+		t.Error("copies not identical")
+	}
+
+	c.Play(4, 4, "black")
+	if c.String() == b.String() {
+		t.Error("copies should not be identical")
+	}
+}
+
+func TestSim(t *testing.T) {
+	seed()
+	for j := 9; j <= 19; j++ {
+		b := New(j)
+		sum := 0
+		for i := 0; i < 1000; i++ {
+			score := random_evaluate(&b, "black")
+			sum += score['b'] - score['w']
+		}
+		t.Log(j, float32(sum)/1000)
+	}
 }
